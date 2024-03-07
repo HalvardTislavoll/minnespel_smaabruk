@@ -23,7 +23,7 @@ Python ver. : 3.10.12
 
 Dependencies:
 File: 
-    "minnespel_smaabruk_support.py" uses minnespel_smaabruk as gui
+    minnespel_smaabruk_support.py uses minnespel_smaabruk as gui
 My modules:   (use pip install ..)
     PyAutoGUI                 0.9.54
     screeninfo                0.8.1
