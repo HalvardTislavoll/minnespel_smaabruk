@@ -6,14 +6,13 @@
 #    Jan 06, 2024 01:58:52 PM CET  platform: kwargsLinux
 #    Jan 08, 2024 09:39:21 AM CET  platform: Linux
 #    Jan 10, 2024 06:05:47 PM CET  platform: Linux
-#    Jan 10, 2024 09:12:40 PM CET  platform: Linux
 #    Jan 25, 2024 06:19:20 PM CET  platform: Linux
 #    Jan 31, 2024 12:17:06 PM CET  platform: Linux
-#    Jan 31, 2024 01:07:16 PM CET  platform: Linux
 #    Feb 09, 2024 02:00:39 PM CET  platform: Linux
 #    Feb 20, 2024 10:24:27 PM CET  platform: Linux
 #    Feb 29, 2024 04:14:11 PM CET  platform: Linux
 #    Mar 07, 2024 08:45:30 AM CET  platform: Linux
+#    Mar 10, 2024 12:03:27 PM CET  platform: Linux
 #
 #       What remains to be done:  ☐ ☑ ☒
 #
@@ -78,7 +77,7 @@ else:
 sh=importlib   # sh is alias shared for short
 #   ---end create shared module-----------------------------
 
-_version = "0.5.0"
+_version = "0.5.1"
 _debug = True # False to eliminate de_w1.Scrolledtext2.bug printing from callback functions.
 _activate_config = False   # activate the toml file during runtime
 
@@ -103,7 +102,7 @@ def minnespel_smaabruk_startup():           # my starting point for this applict
     # a memory game of own images and using four game board
     _top1.title("a Farm Memory game")   # give a a catchy name to this app
     # orderd the frame level to show up correct because working with frames in Page change order
-    sh.lift_wid = [_w1.TFrameLotto, _w1.TFrame1, _w1.TFrame3, _w1.TFrameSplash, _w1.FrameLanguage]
+    sh.lift_wid = [_w1.TFrameLotto, _w1.TFrame1, _w1.TFrame3, _w1.TFrameSplash, _w1.FrameLanguage, _w1.TProgressbarTurn]
     wid_lift()
     # set different font options
     sh.myFont0 = font.Font(family="Ubuntu", size=16)
@@ -117,7 +116,7 @@ def minnespel_smaabruk_startup():           # my starting point for this applict
     sh.player_registration = 1
     sh.game_board = 1
     # locale init language.   'en' is english and 'no' is norwegian
-    locale = 'en'
+    locale = 'no'
     match locale:
         case 'en':
             sh.language = 0
@@ -133,9 +132,9 @@ def minnespel_smaabruk_startup():           # my starting point for this applict
     terminal_place()
     # set decoration line length for use in Therminal  
     sh.decoration = 53
-    # make items on menubar invisible
-    menubar_invisible()
-    # set widgets state   
+    # init items on menubar
+    init_menubar()
+        # set widgets state   
     wid_state()
     # set widgets place
     wid_place()
@@ -313,10 +312,16 @@ def wid_place():
     _w1.TFramePreferences.place(x=2000)
     _w1.FrameLanguage.place(x=2000)
     _w1.TCheckbuttonDisplay.place(x=2000)
-    '''
-    self.TCheckbuttonDisplay = ttk.Checkbutton(self.CanvasSplash)
-    self.TCheckbuttonDisplay.place(x=990, y=530, width=141, height=23)
-    '''
+    _w1.TProgressbarTurn.place(x=2000)
+'''
+        self.turn = tk.IntVar()
+
+        self.TProgressbarTurn = ttk.Progressbar(self.top)
+        self.TProgressbarTurn.place(x=667, y=96, width=18, height=497)
+        self.TProgressbarTurn.configure(orient="vertical")
+        self.TProgressbarTurn.configure(length="18")
+        self.TProgressbarTurn.configure(variable=self.turn)
+'''
 
 def wid_lift():
     for wid in sh.lift_wid:
@@ -478,36 +483,41 @@ def sysem_info():                           # put system info into Terminal
 #     STARTUP ROUTINES SUPPORTING SECTION
 #   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+def menu_state(e, s):         # call back routine for aktivate the menubar
+    '''gjør menyen tilgjengelig ved å endre status'''
+    if s==1:
+        _w1.menubar.entryconfig("H", state="normal")
+    elif s==2:
+        _w1.menubar.entryconfig("H", state="disabled")
+
+def init_menubar():   # menubar: hamburger icon, space1, clock, cur_user, space2, title, space3, help icon, about icon and X icon.
+    # set menubar font, width and state
+    menubar_font()
+    menubar_invisible()
+    menubar_initlength()
+    
+def menubar_font():
+    # set font to TlwgTypewriter to make the width calculation easier for space1, space2 oand space3
+    _w1.menubar.entryconfigure("space1", font="-family {TlwgTypewriter} -size 10 -weight bold")
+    _w1.menubar.entryconfigure("space2", font="-family {TlwgTypewriter} -size 10 -weight bold")
+    _w1.menubar.entryconfigure("space3", font="-family {TlwgTypewriter} -size 10 -weight bold")
+    
 def menubar_invisible():
-    # set space menuitems dissabled
-    _w1.menubar.entryconfigure("space1",   font="-family {TlwgTypewriter} -size 10 -weight bold")
-    _w1.menubar.entryconfigure("space1",   label=" "*1, )
-    _w1.menubar.entryconfigure("space2",   font="-family {TlwgTypewriter} -size 10 -weight bold")
-    _w1.menubar.entryconfigure("space2",   label=" "*25, state="disabled")
-    _w1.menubar.entryconfigure("space3",   label=" "*78, font="-family {TlwgTypewriter} -size 10 -weight bold", state="disabled")
-    _w1.menubar.entryconfigure("clock",    label=" "*11, state="disabled")
-    _w1.menubar.entryconfigure("cur_user", label=" "*21, state="disabled")   # current_user
-    _w1.menubar.entryconfigure("title",    label=" "*22, state="disabled")
+    # make menybar items invisible and not clickable either by making them disabled
+    _w1.menubar.entryconfigure("space2", state="disabled")
+    _w1.menubar.entryconfigure("space3", state="disabled")
+    _w1.menubar.entryconfigure("clock", state="disabled")
+    _w1.menubar.entryconfigure("cur_user", state="disabled")
+    _w1.menubar.entryconfigure("title", state="disabled")
 
-def menubar_player_update():
-    sh.labeltxt = playername_fix(f'{sh.player_name[sh.player+1]}')
-
-    if not sh.menubar_player:
-        _w1.menubar.entryconfigure(sh.old_labeltxt,
-                                   label=sh.labeltxt,
-                                   foreground=str(sh.form_color_lst[sh.player])
-                                  )
-        sh.menubar_player = True
-    else:
-        _w1.menubar.entryconfigure(sh.old_labeltxt,
-                                   label=sh.labeltxt,
-                                   foreground=str(sh.form_color_lst[sh.player])
-                                  )
-    _w1.TLblExplanationLittle.configure(foreground=str(sh.form_color_lst[0]))
-    sh.old_labeltxt = sh.labeltxt
-
-def menubar_title_update():
-    pass
+def menubar_initlength():
+    # make menybar items initial length
+    _w1.menubar.entryconfigure("space1",   label=" "*1)
+    _w1.menubar.entryconfigure("space2",   label=" "*25)
+    _w1.menubar.entryconfigure("space3",   label=" "*78)
+    _w1.menubar.entryconfigure("clock",    label=" "*11)
+    _w1.menubar.entryconfigure("cur_user", label=" "*21)
+    _w1.menubar.entryconfigure("title",    label=" "*22)
 
 def playername_fix(nme):
     '''Let the name be in the middle of 25'''
@@ -527,6 +537,25 @@ def playername_fix(nme):
         # "odd"
         txt = sp1_txt + nme + sp2_txt 
     return txt
+
+def menubar_player_update():
+    sh.labeltxt = playername_fix(f'{sh.player_name[sh.player+1]}')
+    if not sh.menubar_player:
+        _w1.menubar.entryconfigure(sh.old_labeltxt,
+                                   label=sh.labeltxt,
+                                   foreground=str(sh.form_color_lst[sh.player])
+                                  )
+        sh.menubar_player = True
+    else:
+        _w1.menubar.entryconfigure(sh.old_labeltxt,
+                                   label=sh.labeltxt,
+                                   foreground=str(sh.form_color_lst[sh.player])
+                                  )
+    _w1.TLblExplanationLittle.configure(foreground=str(sh.form_color_lst[0]))
+    sh.old_labeltxt = sh.labeltxt
+
+def menubar_title_update():
+    pass
 
 def dict_randomization(d):
     ''' How To Iterate Over A Python Dictionary In Random Order? 
@@ -620,12 +649,25 @@ def fade_in():                              # gradually Toplevel entrance
         _top1.wm_attributes('-alpha', b)
         _top1.update()
         sleep(.01)
-    
-def a_break(t):                             # the action in run time take a break
-    '''routine which make the action in run time take a break'''
+
+def a_break(t):   # _with_progress
+    # Function to update the progress bar
+    def update_progress():
+        _w1.TProgressbarTurn.step(1)
+        _w1.TProgressbarTurn.update_idletasks()
+    # Start the progress bar
+    _w1.TProgressbarTurn["maximum"] = int(t*6)  # Set the maximum value of progress bar
+    _w1.TProgressbarTurn["value"] = 0     # Start from 0
+    _w1.TProgressbarTurn.start(1)        # Adjust the value based on the speed you want
     var = tk.IntVar()
     root.after(t, var.set, 1)
-    root.wait_variable(var)
+    # Update the progress bar while waiting
+    while not var.get():
+        update_progress()
+        root.update()
+    # Stop and destroy the progress bar window
+    _w1.TProgressbarTurn.stop()
+    _w1.TProgressbarTurn.place(x=2000)
 
 def test_solved(num):                       # is images equal than solved
     if sh.player==0:
@@ -726,16 +768,11 @@ def get_translation(translations, language, key):
         return translations[language][key]
     else:
         return f"Translation not found for language '{language}' and key '{key}'"
+
 #   ========================================================
 #
 #     SPLASH SCREEN AND LANGUAGE ROUTINES
 #   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def menu_state(e, s):         # call back routine for aktivate the menubar
-    '''gjør menyen tilgjengelig ved å endre status'''
-    if s==1:
-        _w1.menubar.entryconfig("H", state="normal")
-    elif s==2:
-        _w1.menubar.entryconfig("H", state="disabled")
 
 def set_logo_text():
     '''routine which enter logo text according to selected language'''
@@ -1206,6 +1243,7 @@ def slide(which):
     displayfile(f"{sh.path_photo}{sh.imList[2]}")
     # hide cursor/ pionter when sliding images to prevent using the mouse during img showing
     root.config(cursor="none")
+    _w1.TProgressbarTurn.place(x=667, y=96, width=18, height=497)
     is_solved(which)
 
 def is_solved(which):                       # is the image found
@@ -1228,6 +1266,7 @@ def is_solved(which):                       # is the image found
         display_random()
         # show cursor/ pionter when sliding images is finish
         root.config(cursor="arrow")
+        _w1.TProgressbarTurn.place(x=2000)
         
     else:
         slide_back(which)  # turn image back
@@ -1249,6 +1288,7 @@ def is_solved(which):                       # is the image found
         display_image(player_dict) # player 1 at init time
         # show cursor/ pionter when sliding images is finish
         root.config(cursor="arrow")
+        _w1.TProgressbarTurn.place(x=2000)
 
 def small_image_back_subtitle():
     _w1.TLblExplanationLittle.configure(foreground=str(sh.form_color_lst[sh.player+1]), text=sh.guidance_txt)
@@ -1384,7 +1424,6 @@ def add_game_round():                       # legg til spelerunde
         player_dict = sh.player_lst[sh.players_turn]
         display_image(player_dict) # player 1 at init time
 
-
 #   ========================================================
 #
 #     CLEANUP SECTION
@@ -1451,3 +1490,7 @@ def cleanUp():
 
 if __name__ == '__main__':
     minnespel_smaabruk.start_up()
+
+
+
+
