@@ -1,0 +1,54 @@
+PAGE
+    Toplevel: Toplevel 0
+        Menubar
+        TFrame: TFrame5  
+            TLabel: TLblExplanationLittle  
+        Frame: FrameLanguage  locked
+            TButton: TBtnNext  locked command: on_TBtnNext
+        TFrame: TFramePreferences  locked
+            TLabel: TLabel6  
+            TCheckbutton: TCheckbuttonDisplay   command: on_tch_display
+            TButton: TButtonDismiss_1   command: on_TButtonDismissPref
+            TRadiobutton: TRadiobutton1   command: on_Rbtn
+            TRadiobutton: TRadiobutton2   command: on_Rbtn
+        TFrame: TFrame2  
+            TLabel: TLblExplanationBig  
+        TFrame: TFrame1  locked
+            Canvas: Canvas2  locked
+            Canvas: Canvas3  locked
+            Canvas: Canvas4  locked
+            Canvas: Canvas5  locked
+            Canvas: Canvas6  locked
+            Canvas: Canvas7  locked
+            Canvas: Canvas8  locked
+            Canvas: Canvas1  locked
+            Canvas: Canvas9  locked
+        TFrame: TFrame3  
+            TLabel: TLabel1  locked
+            TLabel: TLabel2  locked
+            TLabel: TLabel3  locked
+            TLabel: TLabel4  locked
+            Label: Label2  locked
+            Label: Label3  locked
+            Label: Label4  locked
+            Label: Label1  locked
+            TEntry: TEntry1  locked bind: <<SetBalloon>> to {set ::vTcl::balloon::%W {Use only letters, capital letter first, no spaces or hyphens}}
+            TEntry: TEntry2  locked bind: <<SetBalloon>> to {set ::vTcl::balloon::%W {Use only letters, capital letter first, no spaces or hyphens}}
+            TEntry: TEntry3  locked bind: <<SetBalloon>> to {set ::vTcl::balloon::%W {Use only letters, capital letter first, no spaces or hyphens}}
+            TEntry: TEntry4  locked bind: <<SetBalloon>> to {set ::vTcl::balloon::%W {Use only letters, capital letter first, no spaces or hyphens}}
+            TLabel: TLabel5  
+            TButton: TBtnGoOn  locked command: on_TBtnGoOn bind: <<SetBalloon>> to {set ::vTcl::balloon::%W {Starts the program}}
+        TFrame: TFrameLotto  locked
+            Scrolledtext: Scrolledtext1  
+                TScrollbar
+                Text
+            Canvas: CanvasLotto  
+        TFrame: TFrameInfo  
+            TButton: TButtonDismiss   command: on_TButtonDismiss
+            Scrolledtext: ScrolledtextHelp  
+                TScrollbar
+                Text
+        TFrame: TFrameSplash  
+            Canvas: CanvasSplash  locked
+                Text: TextLogo  
+

@@ -77,7 +77,7 @@ else:
 sh=importlib   # sh is alias shared for short
 #   ---end create shared module-----------------------------
 
-_version = "0.5.1"
+_version = "0.5.2"
 _debug = True # False to eliminate de_w1.Scrolledtext2.bug printing from callback functions.
 _activate_config = False   # activate the toml file during runtime
 
@@ -102,8 +102,9 @@ def minnespel_smaabruk_startup():           # my starting point for this applict
     # a memory game of own images and using four game board
     _top1.title("a Farm Memory game")   # give a a catchy name to this app
     # orderd the frame level to show up correct because working with frames in Page change order
-    sh.lift_wid = [_w1.TFrameLotto, _w1.TFrame1, _w1.TFrame3, _w1.TFrameSplash, _w1.FrameLanguage, _w1.TProgressbarTurn]
+    sh.lift_wid = [_w1.TFrameLotto, _w1.TFrame1, _w1.TFrame3, _w1.TFrameSplash, _w1.FrameLanguage]
     wid_lift()
+    
     # set different font options
     sh.myFont0 = font.Font(family="Ubuntu", size=16)
     sh.myFont1 = font.Font(family="Ubuntu", size=20)
@@ -225,7 +226,7 @@ def init_var():                             # set most of variables
     _w1.Label4.configure(background = sh.form_color_lst[3])
     sh.style = ttk.Style()
     make_mystyle()
- 
+    
     set_form_color(sh.player)
     ## set_button_color()
     init_path()
@@ -312,16 +313,6 @@ def wid_place():
     _w1.TFramePreferences.place(x=2000)
     _w1.FrameLanguage.place(x=2000)
     _w1.TCheckbuttonDisplay.place(x=2000)
-    _w1.TProgressbarTurn.place(x=2000)
-'''
-        self.turn = tk.IntVar()
-
-        self.TProgressbarTurn = ttk.Progressbar(self.top)
-        self.TProgressbarTurn.place(x=667, y=96, width=18, height=497)
-        self.TProgressbarTurn.configure(orient="vertical")
-        self.TProgressbarTurn.configure(length="18")
-        self.TProgressbarTurn.configure(variable=self.turn)
-'''
 
 def wid_lift():
     for wid in sh.lift_wid:
@@ -650,15 +641,24 @@ def fade_in():                              # gradually Toplevel entrance
         _top1.update()
         sleep(.01)
 
-def a_break(t):   # _with_progress
+def a_break(t):
     # Function to update the progress bar
     def update_progress():
-        _w1.TProgressbarTurn.step(1)
-        _w1.TProgressbarTurn.update_idletasks()
+        TProgressbarTurn.step(0.001)
+        TProgressbarTurn.update_idletasks()
     # Start the progress bar
-    _w1.TProgressbarTurn["maximum"] = int(t*6)  # Set the maximum value of progress bar
-    _w1.TProgressbarTurn["value"] = 0     # Start from 0
-    _w1.TProgressbarTurn.start(1)        # Adjust the value based on the speed you want
+    sh.turn=tk.IntVar()
+    # https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_progressbar.htm
+    TProgressbarTurn = ttk.Progressbar(_top1)
+    TProgressbarTurn.place(x=18, y=690, height=30, width=647)
+    #       self.TFrame5.place(x=10, y=672, height=60, width=660)
+    TProgressbarTurn.configure(orient="horizontal",
+                               mode="indeterminate",
+                               maximum=int(t/2),   # Set the maximum value of progress bar
+                               value=0.0      # Start from 0                 
+                               )
+    TProgressbarTurn.start(1)        # Adjust the value based on the speed you want
+    # Make the brake according to the t value
     var = tk.IntVar()
     root.after(t, var.set, 1)
     # Update the progress bar while waiting
@@ -666,8 +666,9 @@ def a_break(t):   # _with_progress
         update_progress()
         root.update()
     # Stop and destroy the progress bar window
-    _w1.TProgressbarTurn.stop()
-    _w1.TProgressbarTurn.place(x=2000)
+    TProgressbarTurn.stop()
+    # _w1.TProgressbarTurn.place(x=2000)
+    TProgressbarTurn.destroy()
 
 def test_solved(num):                       # is images equal than solved
     if sh.player==0:
@@ -808,7 +809,6 @@ def display_splash():
     _splash = tk.Image("photo", file='assets/lotto_graphics/splash_screen.png')
     _w1.CanvasSplash.create_image((660, 330), image=_splash, anchor='center')
     fade_in() 
-    a_break(sh.spalsh_delay)
     if sh.show_instruction:
         global _instructions
         _instructions = tk.Image("photo", file='assets/lotto_graphics/instructions.png')
@@ -1243,7 +1243,6 @@ def slide(which):
     displayfile(f"{sh.path_photo}{sh.imList[2]}")
     # hide cursor/ pionter when sliding images to prevent using the mouse during img showing
     root.config(cursor="none")
-    _w1.TProgressbarTurn.place(x=667, y=96, width=18, height=497)
     is_solved(which)
 
 def is_solved(which):                       # is the image found
@@ -1266,7 +1265,6 @@ def is_solved(which):                       # is the image found
         display_random()
         # show cursor/ pionter when sliding images is finish
         root.config(cursor="arrow")
-        _w1.TProgressbarTurn.place(x=2000)
         
     else:
         slide_back(which)  # turn image back
@@ -1282,13 +1280,12 @@ def is_solved(which):                       # is the image found
         exec(change_player)
 
         pl_btn=f'on_TBtnPlayer{player_number}()'
-        
+    
         eval(pl_btn)
         player_dict=sh.player_lst[sh.players_turn]
         display_image(player_dict) # player 1 at init time
         # show cursor/ pionter when sliding images is finish
         root.config(cursor="arrow")
-        _w1.TProgressbarTurn.place(x=2000)
 
 def small_image_back_subtitle():
     _w1.TLblExplanationLittle.configure(foreground=str(sh.form_color_lst[sh.player+1]), text=sh.guidance_txt)
@@ -1490,6 +1487,7 @@ def cleanUp():
 
 if __name__ == '__main__':
     minnespel_smaabruk.start_up()
+
 
 
 
